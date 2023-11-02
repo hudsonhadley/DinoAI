@@ -32,120 +32,24 @@ public class Main
 
     public static void main(String[] args) throws IOException, InterruptedException, AWTException
     {
+        int bestStart = 300;
+        int bestEnd = 500;
+        int bestTimePeriod = 15;
+
+        
         Scanner scnr = new Scanner(System.in);
         System.out.println("Do you need to setup the game? (y or n)");
         boolean setup = scnr.next().toLowerCase().charAt(0) == 'y';
 
         Game game = new Game(setup);
+        Dino dino = new Dino(bestStart, bestEnd, bestTimePeriod);
 
-        System.out.println("Switch to dino game and place your mouse in the top left corner when ready!");
+        System.out.println("Switch to dino game and place your mouse in the top left corner when ready!");    
+
 
         while (mouseNotInCorner()); // Wait until mouse is in corner
+        start();
 
-
-        System.out.println("Looking for best start...");
-
-        int bestStart = 0;
-        long bestTime = 0;
-        for (int i = 10; i < 500; i += 10)
-        {
-            System.out.println();
-            System.out.println("i = " + i);
-            System.out.println("bestTime = " + bestTime);
-            System.out.println("bestStart = " + bestStart);
-            start();
-            long start = System.currentTimeMillis();
-            Dino dino = new Dino(i, i, 10);
-            dino.run(game);
-            long end = System.currentTimeMillis();
-
-            if (end - start > bestTime)
-            {
-                bestTime = end - start;
-                bestStart = i;
-            }
-
-            if (end - start < bestTime)
-            {
-                break;
-            }
-
-            if (!mouseNotInCorner())
-            {
-                return;
-            }
-        }
-
-
-        System.out.println("Looking for best increment period...");
-
-        int bestI = 0;
-        bestTime = 0;
-        for (int i = 0; i < 100; i += 5)
-        {
-            System.out.println();
-            System.out.println("i = " + i);
-            System.out.println("bestTime = " + bestTime);
-            System.out.println("bestI = " + bestI);
-            start();
-            long start = System.currentTimeMillis();
-            Dino dino = new Dino(bestStart, Toolkit.getDefaultToolkit().getScreenSize().width, i);
-            dino.run(game);
-            long end = System.currentTimeMillis();
-
-            if (end - start > bestTime)
-            {
-                bestTime = end - start;
-                bestI = i;
-            }
-
-            if (end - start < bestTime)
-            {
-                break;
-            }
-
-            if (!mouseNotInCorner())
-            {
-                return;
-            }
-        }
-
-
-        System.out.println("Looking for best end...");
-
-
-        int bestEnd = 0;
-        bestTime = 0;
-        for (int i = 500; i < Toolkit.getDefaultToolkit().getScreenSize().width; i += 10)
-        {
-            System.out.println();
-            System.out.println("i = " + i);
-            System.out.println("bestTime = " + bestTime);
-            System.out.println("bestEnd = " + bestEnd);
-            start();
-            long start = System.currentTimeMillis();
-            Dino dino = new Dino(bestStart, i,  bestI);
-            dino.run(game);
-            long end = System.currentTimeMillis();
-
-            if (end - start > bestTime)
-            {
-                bestTime = end - start;
-                bestI = i;
-            }
-
-            if (end - start < bestTime)
-            {
-                break;
-            }
-
-            if (!mouseNotInCorner())
-            {
-                return;
-            }
-        }
-
-        System.out.println(bestStart + " " + bestEnd + " " + bestI);
-
+        dino.run(game);
     }
 }
