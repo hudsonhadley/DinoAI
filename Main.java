@@ -32,9 +32,9 @@ public class Main
 
     public static void main(String[] args) throws IOException, InterruptedException, AWTException
     {
-        int bestStart = 300;
-        int bestEnd = 500;
-        int bestTimePeriod = 15;
+        int bestStart = 225;
+        int bestEnd = 600;
+        int bestTimePeriod = 30;
 
         
         Scanner scnr = new Scanner(System.in);
@@ -48,8 +48,23 @@ public class Main
 
 
         while (mouseNotInCorner()); // Wait until mouse is in corner
+        long start = System.currentTimeMillis();
         start();
 
         dino.run(game);
+
+        
+        long time = System.currentTimeMillis() - start;
+        time /= 1000;
+
+        int hours = (int)time / 3600;
+        time %= 3600;
+
+        int minutes = (int)time / 60;
+        time %= 60;
+
+        int seconds = (int)time;
+
+        System.out.println(hours + ":" + minutes + ":" + seconds);
     }
 }
