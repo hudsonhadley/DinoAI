@@ -16,7 +16,6 @@ public class Game
     private int topOfDino;
     private int rightOfDino;
     private int bottomOfDino;
-    private int leftOfDino;
     private Point gameOver;
     private int gameOverColor;
 
@@ -42,7 +41,6 @@ public class Game
             topOfDino = presetValues.TOP_OF_DINO;
             rightOfDino = presetValues.RIGHT_OF_DINO;
             bottomOfDino = presetValues.BOTTOM_OF_DINO;
-            leftOfDino = presetValues.LEFT_OF_DINO;
             gameOver = presetValues.GAME_OVER;
             gameOverColor = presetValues.GAME_OVER_COLOR;
         }
@@ -51,11 +49,6 @@ public class Game
     public int getBottomOfDino()
     {
         return bottomOfDino;
-    }
-
-    public int getLeftOfDino()
-    {
-        return leftOfDino;
     }
 
     public int getRightOfDino()
@@ -206,15 +199,7 @@ public class Game
         bottomOfDino = getMousePosition().y;
 
         presetValuesString += "\tpublic final int BOTTOM_OF_DINO = " + bottomOfDino + ";\n";
-
-
-        // Now we need to know the x position of the mouse at the left of the dino's head
-        System.out.println("Location: Leftmost part of the dino's head. Waiting for input to capture...");
-
-        scnr.nextLine();
-        leftOfDino = getMousePosition().x;
-
-        presetValuesString += "\tpublic final int LEFT_OF_DINO = " + leftOfDino + ";\n";
+        
 
 
         // Now we need the coordinates of the G in Game Over to tell if the game is over or not
