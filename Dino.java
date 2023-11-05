@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Runner is the thing that actually plays the game. It sets the game up by creating a Game object, then runs and jumps
+ * Dino is the thing that actually plays the game. It sets the game up by creating a Game object, then runs and jumps
  * if it sees obstacles. It has a public static variable robot that we will use in our methods. It also has a jump
  * method and an isObstacle method.
  */
@@ -32,8 +32,8 @@ public class Dino
     {
         ROBOT = new Robot();
 
-        this.END_JUMP_WIDTH = endJumpWidth;
         this.START_JUMP_WIDTH = startJumpWidth;
+        this.END_JUMP_WIDTH = endJumpWidth;
         this.TIME_PERIOD = timePeriod;
     }
 
@@ -66,16 +66,21 @@ public class Dino
 
 
     /**
-     * Returns whether the game is over or not. It does this by counting how many black pixels are around the dino's
-     * head. If there are a lot (i.e. over 150) then it is alive. If there are not a lot (i.e. under 150) then it is
-     * dead.
+     * Returns whether the game is over or not. It does this by looking at if the retry button that pops up when you
+     * die is there or not. It compares the background color to something it knows where the retry button is. If these
+     * are the same then it is not over. If it is different then it is over.
      *
      * @return true if the game is over and false if it is not over
      */
     public boolean isOver(Game game)
     {
-//        System.out.println(ROBOT.getPixelColor(game.getGameOverX(), game.getGameOverY()).getRGB() + " " + game.getGameOverColor());
-        return ROBOT.getPixelColor(game.getGameOverX(), game.getGameOverY()).getRGB() == game.getGameOverColor();
+        int retryButton = ROBOT.getPixelColor(Toolkit.getDefaultToolkit().getScreenSize().width / 2, game.getTopOfRetry()).getRGB();
+        int background = ROBOT.getPixelColor(Toolkit.getDefaultToolkit().getScreenSize().width / 2, game.getTopOfRetry() - 30).getRGB();
+
+
+        // Unfortunately clouds exist, so we can't do exactly unequal. Luckily the difference between the retry button and the background
+        // is greater than the clouds
+        return retryButton - background > 100;
     }
 
 
