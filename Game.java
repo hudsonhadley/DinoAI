@@ -16,18 +16,17 @@ public class Game
     private int topOfDino;
     private int rightOfDino;
     private int bottomOfDino;
-    private Point gameOver;
-    private int gameOverColor;
+    private int topOfRetry;
 
     /**
      * Our constructor takes in one boolean to see if we need to set up or not. If it does need to set up, it will run the
      * setup method. If it doesn't, it will look to the PresetValues class and get values from there.
      * @param calibrate If we need to set up or not
      * @throws AWTException Because we use setup()
-     * @throws IOException Because we use setup()
      * @throws InterruptedException Because we use setup()
+     * // @throws IOException Because we use setup()
      */
-    public Game(boolean calibrate) throws AWTException, IOException, InterruptedException
+    public Game(boolean calibrate) throws AWTException, InterruptedException //, IOException
     {
         if (calibrate)
         {
@@ -36,13 +35,10 @@ public class Game
 
         else
         {
-            PresetValues presetValues = new PresetValues();
-
-            topOfDino = presetValues.TOP_OF_DINO;
-            rightOfDino = presetValues.RIGHT_OF_DINO;
-            bottomOfDino = presetValues.BOTTOM_OF_DINO;
-            gameOver = presetValues.GAME_OVER;
-            gameOverColor = presetValues.GAME_OVER_COLOR;
+            topOfDino = PresetValues.TOP_OF_DINO;
+            rightOfDino = PresetValues.RIGHT_OF_DINO;
+            bottomOfDino = PresetValues.BOTTOM_OF_DINO;
+            topOfRetry = PresetValues.TOP_OF_RETRY;
         }
     }
 
@@ -50,35 +46,21 @@ public class Game
     {
         return bottomOfDino;
     }
-
     public int getRightOfDino()
     {
         return rightOfDino;
     }
-
     public int getTopOfDino()
     {
         return topOfDino;
     }
-
+    public int getTopOfRetry()
+    {
+        return topOfRetry;
+    }
     public int getGameHeight()
     {
         return bottomOfDino - topOfDino;
-    }
-
-    public int getGameOverX()
-    {
-        return gameOver.x;
-    }
-
-    public int getGameOverY()
-    {
-        return gameOver.y;
-    }
-
-    public int getGameOverColor()
-    {
-        return gameOverColor;
     }
 
     /**
@@ -86,18 +68,19 @@ public class Game
      * are already defined in this class.
      * @param width How wide do we want the capture to be
      * @return A buffered image of the screen
-     * @throws IOException Because of using saveImage sometimes
+     * // @throws IOException Because of using saveImage sometimes
      */
     public BufferedImage screenshot(int width) throws IOException
     {
-        Rectangle screen = new Rectangle(0, topOfDino, width, getGameHeight());
+        Rectangle screen = new Rectangle(rightOfDino, topOfDino, width, getGameHeight());
 
         BufferedImage image = ROBOT.createScreenCapture(screen);
 
-//        saveImage(image, "src/image.png");
+        saveImage(image, "src/image.png");
 
         return image;
     }
+
 
     /**
      * Saves an image to a file.
@@ -132,7 +115,7 @@ public class Game
         for (int i = 0; i < image.getHeight(); i += 2)
         {
             // Go through the width (2 at a time)
-            for (int j = getRightOfDino(); j < image.getWidth(); j += 2)
+            for (int j = 0; j < image.getWidth(); j += 2)
             {
                 if (image.getRGB(j, i) != background)
                 {
@@ -149,16 +132,14 @@ public class Game
 
     /**
      * Setup writes to PresetValues.java and finds those values with help from the user.
-     * @throws IOException from MouseInfo
      * @throws InterruptedException from Thread.sleep()
      */
-    public void setup() throws IOException, InterruptedException
+    public void setup() throws InterruptedException
     {
         // Stores the string which we'll write
-        String presetValuesString = "import java.awt.*;\n\npublic class PresetValues\n{\n";
+        String presetValuesString = "public class PresetValues\n{\n";
 
         Scanner scnr = new Scanner(System.in); // Need this to wait until the user is ready
-        Point mouse; // This will tell us where the mouse is
 
         // Give instructions
         System.out.println("Setup will require the chrome dino game to be open. Once you have it open (chrome://dino),");
@@ -180,7 +161,7 @@ public class Game
         scnr.nextLine();
         topOfDino = getMousePosition().y;
 
-        presetValuesString += "\tpublic final int TOP_OF_DINO = " + topOfDino + ";\n";
+        presetValuesString += "\tpublic static final int TOP_OF_DINO = " + topOfDino + ";\n";
 
 
         // Now we need to know the x position of the mouse at the rightmost part of the dino
@@ -189,7 +170,7 @@ public class Game
         scnr.nextLine();
         rightOfDino = getMousePosition().x + 10; // The dino has an outline that can mess up our search for an obstacle so move it a little bit more to the right to be sure
 
-        presetValuesString +="\tpublic final int RIGHT_OF_DINO = " + rightOfDino + ";\n";
+        presetValuesString +="\tpublic static final int RIGHT_OF_DINO = " + rightOfDino + ";\n";
 
 
         // Now we need to know the y position of the moues at the bottom of the dino's head
@@ -198,19 +179,18 @@ public class Game
         scnr.nextLine();
         bottomOfDino = getMousePosition().y;
 
-        presetValuesString += "\tpublic final int BOTTOM_OF_DINO = " + bottomOfDino + ";\n";
-        
+        presetValuesString += "\tpublic static final int BOTTOM_OF_DINO = " + bottomOfDino + ";\n";
 
 
-        // Now we need the coordinates of the G in Game Over to tell if the game is over or not
-        System.out.println("Location: Anywhere on the G in \"Game Over\". Hit enter then switch to dino game for a couple seconds...");
+
+        // Now we need the y coordinate of the top of the retry button
+        System.out.println("Location: Top of the retry button. Waiting for input...");
 
         scnr.nextLine();
-        Thread.sleep(4000);
-        gameOver = getMousePosition();
+        topOfRetry = getMousePosition().y + 10;
 
-        presetValuesString += "\npublic final Point GAME_OVER = new Point(" + gameOver.x + ", " + gameOver.y + ");\n";
-        presetValuesString += "\npublic final int GAME_OVER_COLOR = " + ROBOT.getPixelColor(gameOver.x, gameOver.y).getRGB() + ";\n";
+        presetValuesString += "\tpublic static final int TOP_OF_RETRY = " + topOfRetry + ";\n";
+
 
         System.out.println("Hit enter to continue to the game...");
         scnr.nextLine();
@@ -225,11 +205,9 @@ public class Game
      * Writes a string s to a file with fileName in the project
      * @param s The string we'll write
      * @param fileName The file in the project we want to write to
-     * @throws IOException File throws this
      */
-    private void createFile(String s, String fileName) throws IOException
+    private void createFile(String s, String fileName)
     {
-        File file = new File(fileName);
         try
         {
             FileWriter fileWriter = new FileWriter(fileName);
